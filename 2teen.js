@@ -4,7 +4,10 @@ function closeWarning() {
 
 function Warning(type) {
     document.getElementById("warning").classList.remove("hidden");
-    exportIMG(type);
+    document.getElementById("accept").addEventListener("click", () => {
+        document.getElementById("warning").classList.add("hidden");
+        exportIMG(type);
+    });
 }
 
 function exportIMG(type) {
@@ -12,7 +15,7 @@ function exportIMG(type) {
 
     const apiUrl = 'https://api.waifu.im/search';
     const params = {
-        included_tags: [type.toString()],
+        included_tags: [type],
         height: '>=2000'
     };
 

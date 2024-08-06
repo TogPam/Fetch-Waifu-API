@@ -1,33 +1,10 @@
-// const apiTag = 'https://api.waifu.im/tags';
-// fetch(apiTag)
-//     .then(response => {
-//         if (response.ok) {
-//             return response.json();
-//         } else {
-//             throw new Error('Request failed with status code: ' + response.status);
-//         }
-//     })
-//     .then(data => {
-//         console.log(data);
-//         const container = document.getElementById("category");
-
-//         let button = '';
-//         data.versatile.forEach(keyword => {
-//             button += `<button class="text-white hover:text-red-600" onclick="ran('${keyword}')" onclick="openPopup()"> ${keyword}</button>`
-//         });
-//         data.nsfw.forEach(keyword => {
-//             button += `<button class="text-white hover:text-red-600" onclick="ran('${keyword}')"> ${keyword}</button>`
-//         });
-//         container.innerHTML = button;
-//     })
-//     .catch(error => {
-//         console.error(error);
-//     })
-
-function openPopup() {
-
+function closeWarning() {
+    document.getElementById("warning").classList.add("hidden");
 }
 
+function Warning() {
+    document.getElementById("warning").classList.remove("hidden");
+}
 
 function exportIMG(type) {
     let pic = '';

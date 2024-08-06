@@ -55,7 +55,7 @@
                     button += `<button class="text-white hover:text-red-600" onclick="exportIMG('${keyword}')" onclick="openPopup()"> ${keyword}</button>`
                 });
                 data.nsfw.forEach(keyword => {
-                    button += `<button class="text-white hover:text-red-600" onclick="Warning()"> ${keyword}</button>`
+                    button += `<button class="text-white hover:text-red-600" onclick="Warning('${keyword}')"> ${keyword}</button>`
                 });
                 container.innerHTML = button;
             })

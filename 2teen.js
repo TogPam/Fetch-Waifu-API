@@ -2,8 +2,9 @@ function closeWarning() {
     document.getElementById("warning").classList.add("hidden");
 }
 
-function Warning() {
+function Warning(type) {
     document.getElementById("warning").classList.remove("hidden");
+    exportIMG(type);
 }
 
 function exportIMG(type) {

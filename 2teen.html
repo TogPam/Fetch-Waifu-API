@@ -16,7 +16,38 @@
         </div>
         <div class="grid grid-cols-1 max-w-8xl gap--x-10 md:grid-cols-5" id="listpic">
         </div>
+        <!--<div id="popup" class="bg-black w-[36rem]">
+            <h1 class="text-red-900">CẢNH BÁO</h1>
+        </div>!-->
     </div>
+    <script>
+        //fetch tags data 
+        const apiTag = 'https://api.waifu.im/tags';
+        fetch(apiTag)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Request failed with status code: ' + response.status);
+                }
+            })
+            .then(data => {
+                console.log(data);
+                const container = document.getElementById("category");
+
+                let button = '';
+                data.versatile.forEach(keyword => {
+                    button += `<button class="text-white hover:text-red-600" onclick="exportIMG('${keyword}')" onclick="openPopup()"> ${keyword}</button>`
+                });
+                data.nsfw.forEach(keyword => {
+                    button += `<button class="text-white hover:text-red-600" onclick="exportIMG('${keyword}')"> ${keyword}</button>`
+                });
+                container.innerHTML = button;
+            })
+            .catch(error => {
+                console.error(error);
+            })
+    </script>
 </body>
 
 </html>

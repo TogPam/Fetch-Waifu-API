@@ -4,15 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heotai</title>
+    <title>WaiFu_Pic</title>
     <link href="./src/output.css" rel="stylesheet">
 </head>
 
 <body>
     <script src="2teen.js"></script>
-    <div class=" min-h-screen justify-center items-center bg-cyan-100 pt-10 bg-cover">
-        <h1 class="text-center text-4xl font-bold">QUAI PHU LỎ.IMG</h1><br>
-        <h2 class="text-center text-2xl font-bold">DÀNH CHO SIMP LỎ</h2><br>
+    <div class=" min-h-screen justify-center items-center bg-pink-200 pt-10 bg-cover">
+        <h1 class="text-center text-4xl font-bold text-pink-500">WAIFU IMG</h1><br>
+        <h2 class="text-center text-2xl font-bold text-gray-500">CHO QUAI PHU LỎ</h2><br>
         <div id="category" class="grid grid-cols-5  gap-x-5 bg-gray-900 p-2 m-2 rounded-lg md:grid-cols-9">
         </div>
         <div class="grid grid-cols-1 max-w-8xl gap--x-10 md:grid-cols-5" id="listpic">
@@ -52,7 +52,7 @@
 
                 let button = '';
                 data.versatile.forEach(keyword => {
-                    button += `<button class="text-white hover:text-red-600" onclick="exportIMG('${keyword}')" onclick="openPopup()"> ${keyword}</button>`
+                    button += `<button class="text-white hover:text-red-600" onclick="exportIMG('${keyword}')"> ${keyword}</button>`
                 });
                 data.nsfw.forEach(keyword => {
                     button += `<button class="text-white hover:text-red-600" onclick="Warning('${keyword}')"> ${keyword}</button>`

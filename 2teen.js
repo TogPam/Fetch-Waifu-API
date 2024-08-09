@@ -23,14 +23,15 @@ async function exportIMG(type) { //hàm xuất hình
     while (container.firstChild) {
         container.removeChild(container.firstChild);
     }
-    //5 ảnh đầu sẽ thật nhanh nên sẽ update DOM cho mỗi response
-    for (let i = 0; i < 5; i++) {
+    //fetch 20 object tạo hình từ fragment cập nhập DOM từng fragment
+    for (let i = 0; i < 20; i++) {
         fetch(requestUrl)
             .then(response => {
                 if (response.ok) return response.json();
             })
             .then(data => {
                 try {
+                    console.log(data);
                     const fragment = document.createDocumentFragment();
                     makePic(data, fragment);
                     // //update DOM
@@ -40,26 +41,6 @@ async function exportIMG(type) { //hàm xuất hình
                 }
             })
             .catch(e => console.error(e));
-    }
-
-    //load từ từ theo cụm từ response đẩy vào promise
-    for (let j = 0; j < 3; j++) {
-        const promiseArray = [];
-        //mỗi container 10 ảnh
-        for (let i = 0; i < 10; i++) {
-            promiseArray.push(fetch(requestUrl)
-                .then(response => {
-                    if (response.ok) return response.json();
-                })
-                .catch(e => console.error(e)));
-        }
-        try {
-            const results = await Promise.all(promiseArray);;
-            //update DOM trong hàm là trả về fragment, đưa vào container
-            container.appendChild(crePic_From_PromiseArray(results));
-        } catch (e) {
-            console.error(e);
-        }
     }
 }
 
@@ -78,16 +59,6 @@ function makePic(data, fragment) {//hàm tạo hình return fragment cũ
     a.appendChild(img);
     div.appendChild(a);
     fragment.appendChild(div);
-    return fragment;
-}
-
-
-function crePic_From_PromiseArray(results) {//hàm tạo fragment cho mỗi hình và return fragment mới
-    const fragment = document.createDocumentFragment();
-    //chạy mảng results để xây dựng chuỗi HTML cho các hình ảnh
-    results.forEach(data => {
-        makePic(data, fragment);
-    });
     return fragment;
 }
 

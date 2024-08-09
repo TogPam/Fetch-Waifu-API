@@ -71,5 +71,5 @@ function Warning(type) {//hàm cảnh báo
     document.getElementById("accept").addEventListener("click", () => {
         closeWarning();
         exportIMG(type);
-    });
+    }, { once: true });
 }

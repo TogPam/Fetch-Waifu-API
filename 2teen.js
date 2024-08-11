@@ -31,7 +31,6 @@ async function exportIMG(type) { //hàm xuất hình
             })
             .then(data => {
                 try {
-                    console.log(data);
                     const fragment = document.createDocumentFragment();
                     makePic(data, fragment);
                     // //update DOM

@@ -23,24 +23,19 @@ async function exportIMG(type) { //hàm xuất hình
     while (container.firstChild) {
         container.removeChild(container.firstChild);
     }
+
     //fetch 20 object tạo hình từ fragment cập nhập DOM từng fragment
     for (let i = 0; i < 20; i++) {
-        fetch(requestUrl)
-            .then(response => {
-                if (response.ok) return response.json();
-            })
-            .then(data => {
-                try {
-                    const fragment = document.createDocumentFragment();
-                    makePic(data, fragment);
-                    // //update DOM
-                    container.appendChild(fragment);
-                } catch (e) {
-                    console.error(e);
-                }
-            })
-            .catch(e => console.error(e));
+        const data = await getTodo(requestUrl);
+        const fragment = document.createDocumentFragment();
+        makePic(data, fragment);
+        //update DOM
+        container.appendChild(fragment);
     }
+}
+
+const getTodo = async (url) => {
+    return (await fetch(url)).json();
 }
 
 function makePic(data, fragment) {//hàm tạo hình return fragment cũ

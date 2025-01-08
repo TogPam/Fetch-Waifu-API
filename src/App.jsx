@@ -1,7 +1,7 @@
 import { useState, useEffect, lazy } from 'react'
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
-
+import logo from './assets/favicon-32x32.png'
 export default function App() {
 
   const apiTag = 'https://api.waifu.im/tags';
@@ -113,7 +113,7 @@ export default function App() {
               <LazyLoadImage
                 effect="blur"
                 src={pic}
-                placeholderSrc="/favicon-32x32.png"
+                placeholderSrc={logo}
                 threshold={100}
                 width="100%"
                 height="100%"

@@ -1,15 +1,19 @@
 {
   "name": "anime_api_reactjs",
   "private": true,
+  "homepage": "https://togpam.github.io/Fetch-Waifu-API/",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
+    "gh-pages": "^6.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-lazy-load-image-component": "^1.6.3"

@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import logo from './assets/favicon-32x32.png'
@@ -6,34 +6,35 @@ export default function App() {
 
   const apiTag = 'https://api.waifu.im/tags';
   const [tags, setTags] = useState([]);
-  const [picsUrl, setPicsUrl] = useState([]);
+  const picsUrl = useRef([]);
   const [loadingTags, setLoadingTags] = useState(true);
   const [loadingPics, setLoadingPics] = useState(false);
-
+  const [renderPics, setRenderPics] = useState([]);
   //tạo các thẻ tags từ api cho vào useState() tags
-  function getTag() {
-    fetch(apiTag)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error('Request failed with status code: ' + response.status);
-        }
-      })
-      .then(data => {
-        //console.log(data)
-        const allTags = [...(data.versatile || []), ...(data.nsfw || [])];
-        setTags(allTags);
-        setLoadingTags(false)
-      })
-      .catch(err => {
-        console.error(err)
-        setLoadingTags(false)
-      })
-  }
 
-  //sử dụng useEffect() chạy hàm khi vào website
+
+  //sử dụng useEffect() fetch tags khi mount website
   useEffect(() => {
+
+    function getTag() {
+      fetch(apiTag)
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error('Request failed with status code: ' + response.status);
+          }
+        })
+        .then(data => {
+          const allTags = [...(data.versatile || []), ...(data.nsfw || [])];
+          setTags(allTags);
+          setLoadingTags(false)
+        })
+        .catch(err => {
+          console.error(err)
+          setLoadingTags(false)
+        })
+    }
     getTag()
   }, [])
 
@@ -44,7 +45,6 @@ export default function App() {
       </div>
     );
   }
-
 
   //tạo url api từ thể loại(type)
   function getUrlType(type) {
@@ -70,24 +70,24 @@ export default function App() {
 
   //fetch url api sử dụng Promise.all, trả về hàm pics gồm các url src ảnh
   async function fetchPics(url, count) {
-    const requests = Array.from({ length: count }, () => fetch(url).then(res => res.json()));
-    try {
-      const responses = await Promise.all(requests);
-      const pics = responses.map(data => data.images[0].url);
-      return pics;
-    } catch (err) {
-      console.error(err);
-      return [];
+    for (let i = 0; i < count; i++) {
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const picUrl = data.images[0].url;
+        picsUrl.current = [...picsUrl.current, picUrl]; // Thêm vào danh sách
+        setRenderPics([...picsUrl.current]); // Cập nhật UI
+      } catch (err) {
+        console.error('Error fetching image:', err);
+      }
     }
   }
 
   async function handler(type) {
     setLoadingPics(true);
-    setPicsUrl([]);
     const url = getUrlType(type);
-    const picsFetch = await fetchPics(url, 30);
-    const picsUrlUnique = [...new Set(picsFetch)];
-    setPicsUrl(picsUrlUnique);
+    await fetchPics(url, 30); // Tải và cập nhật ảnh từng bước
+    //picsUrl = [];
     setLoadingPics(false);
   }
 
@@ -102,13 +102,13 @@ export default function App() {
           <button key={index} onClick={() => handler(tag)}>{tag}</button>
         ))}
       </div>
-      {loadingPics ? (
+      {loadingPics && renderPics.length === 0 ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
           <div className="spinner"></div>
         </div>
       ) : (
         <div className="pics">
-          {picsUrl.map((pic, index) => (
+          {renderPics.map((pic, index) => (
             <a href={pic} key={index} target="_blank" rel="noopener noreferrer">
               <LazyLoadImage
                 effect="blur"

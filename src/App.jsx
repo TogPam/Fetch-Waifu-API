@@ -1,21 +1,24 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import logo from './assets/favicon-32x32.png'
 export default function App() {
 
   const apiTag = 'https://api.waifu.im/tags';
-  const [tags, setTags] = useState([]);
+  const apiUrl = 'https://api.waifu.im/search';
+  const versatileTags = useRef([]);
+  const nsfwTags = useRef([]);
   const picsUrl = useRef([]);
   const [loadingTags, setLoadingTags] = useState(true);
   const [loadingPics, setLoadingPics] = useState(false);
   const [renderPics, setRenderPics] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const currentTag = useRef('');
   //tạo các thẻ tags từ api cho vào useState() tags
 
 
   //sử dụng useEffect() fetch tags khi mount website
   useEffect(() => {
-
     function getTag() {
       fetch(apiTag)
         .then(response => {
@@ -26,8 +29,10 @@ export default function App() {
           }
         })
         .then(data => {
-          const allTags = [...(data.versatile || []), ...(data.nsfw || [])];
-          setTags(allTags);
+          const versatiletags = [...(data.versatile || [])];
+          versatileTags.current = versatiletags;
+          const nsfwtags = [...(data.nsfw || [])];
+          nsfwTags.current = nsfwtags;
           setLoadingTags(false)
         })
         .catch(err => {
@@ -48,7 +53,6 @@ export default function App() {
 
   //tạo url api từ thể loại(type)
   function getUrlType(type) {
-    const apiUrl = 'https://api.waifu.im/search';
     const params = {
       included_tags: [type],
       height: '>=2000'
@@ -83,23 +87,59 @@ export default function App() {
     }
   }
 
-  async function handler(type) {
+  async function handler(type, isNsfw = false) {
+
+    if (isNsfw) {
+      setShowModal(true);
+      currentTag.current = type;
+      return;
+    }
+
     setLoadingPics(true);
     const url = getUrlType(type);
+    picsUrl.current = [];
+    setRenderPics([...picsUrl.current]); // Cập nhật UI
     await fetchPics(url, 30); // Tải và cập nhật ảnh từng bước
-    //picsUrl = [];
     setLoadingPics(false);
+  }
+
+  // Xử lý "Đồng ý" trong modal
+  function handleConfirm() {
+    setShowModal(false);
+    handler(currentTag.current);
+  }
+
+  // Xử lý "Hủy" trong modal
+  function handleCancel() {
+    setShowModal(false);
   }
 
   return (
     <>
+      {showModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <div className="modal-header">Cảnh báo</div>
+            <p>Nội dung này không phù hợp với trẻ em. Bạn có chắc muốn tiếp tục?</p>
+            <div className="modal-buttons">
+              <button className="cancel" onClick={handleCancel}>Hủy</button>
+              <button className="confirm" onClick={handleConfirm}>Đồng ý</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="header">
         <h1>ANIME PÍC</h1>
         <h3>togpam</h3>
       </div>
       <div className="list">
-        {tags.map((tag, index) => (
-          <button key={index} onClick={() => handler(tag)}>{tag}</button>
+        {versatileTags.current.map((tag, index) => (
+          <button key={index} onClick={() => handler(tag, false)}>{tag}</button>
+        ))}
+        <br />
+        {nsfwTags.current.map((tag, index) => (
+          <button key={index} onClick={() => handler(tag, true)} className='nsfw'>{tag}</button>
         ))}
       </div>
       {loadingPics && renderPics.length === 0 ? (
